@@ -1,0 +1,79 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Trend Avcısı - SarScope{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center animate__animated animate__fadeIn">
+    <div class="col-lg-8">
+        <div class="card glass-effect shadow mb-4">
+            <div class="card-header bg-warning text-dark fw-bold">
+                🕵️‍♂️ Trend Avcısı
+            </div>
+            <div class="card-body">
+                <p class="card-text">Pazaryeri kategori linkini yapıştırın ve en çok satan ürünleri analiz edin.</p>
+                <form method="post" class="row g-2">
+                    {% csrf_token %}
+                    <div class="col-md-9">
+                        <input type="url" name="url" class="form-control" placeholder="https://www.trendyol.com/..." value="{{ url|default:'' }}" required>
+                    </div>
+                    <div class="col-md-3">
+                        <button type="submit" class="btn btn-dark w-100">🔍 Tara</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        {% if error %}
+            <div class="alert alert-danger">{{ error }}</div>
+        {% endif %}
+
+        {% if results %}
+            <div class="card glass-effect shadow animate__animated animate__fadeInUp">
+                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                    <span>Sonuçlar ({{ results|length }} Ürün Bulundu)</span>
+                    <form action="{% url 'send_trend_report' %}" method="post" class="d-inline">
+                        {% csrf_token %}
+                        <!-- Mail atarken tekrar tarama yapması için aynı URL'yi kullanıyoruz -->
+                        <input type="hidden" name="url" value="{{ url }}">
+                        <!-- Mail atıldığını belirten bir flag ekleyebiliriz veya view tarafında logic kurabiliriz -->
+                        <!-- Şimdilik basitlik adına kullanıcıya manuel kopyalama önerisi yerine bu butonu koyduk -->
+                        <button type="submit" class="btn btn-sm btn-light text-success fw-bold">📧 Sonuçları Mail At</button>
+                    </form>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0 align-middle">
+                        <thead class="table-secondary">
+                            <tr>
+                                <th>Sıra</th>
+                                <th>Ürün Adı</th>
+                                <th>Fiyat</th>
+                                <th>Durum</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in results %}
+                            <tr>
+                                <td><span class="badge bg-secondary">#{{ item.rank }}</span></td>
+                                <td class="fw-bold">
+                                    <a href="{{ item.link }}" target="_blank" class="text-decoration-none text-reset">
+                                        {{ item.name }} 🔗
+                                    </a>
+                                </td>
+                                <td class="text-success">{{ item.price }}</td>
+                                <td>
+                                    {% if item.in_inventory %}
+                                        <span class="badge bg-success">Envanterde Var</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">Fırsat!</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

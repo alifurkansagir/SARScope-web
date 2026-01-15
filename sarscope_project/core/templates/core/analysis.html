@@ -1,0 +1,109 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Analiz - SarScope{% endblock %}
+
+{% block content %}
+<div class="animate__animated animate__fadeIn">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="fw-light">Pazar <span class="fw-bold text-info">Analizi</span></h1>
+        <a href="{% url 'send_report' 'analysis' %}" class="btn btn-outline-info">📧 Analizi Mail At</a>
+    </div>
+
+    <!-- Özet Kartları -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card glass-effect text-white bg-primary bg-gradient mb-3 shadow">
+                <div class="card-body">
+                    <h5 class="card-title">Toplam Ürün</h5>
+                    <h2 class="display-4 fw-bold">{{ total_products }}</h2>
+                    <p class="card-text"><small>Takip edilen aktif ürünler</small></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card glass-effect text-white bg-success bg-gradient mb-3 shadow">
+                <div class="card-body">
+                    <h5 class="card-title">Rekabet Avantajı</h5>
+                    <h2 class="display-4 fw-bold">%{{ competitive_advantage }}</h2>
+                    <p class="card-text"><small>Daha ucuz olduğumuz ürünler</small></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card glass-effect text-white bg-danger bg-gradient mb-3 shadow">
+                <div class="card-body">
+                    <h5 class="card-title">Toplam Rakip</h5>
+                    <h2 class="display-4 fw-bold">{{ total_competitors }}</h2>
+                    <p class="card-text"><small>Takip edilen rakip linkleri</small></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card glass-effect text-white bg-warning bg-gradient mb-3 shadow">
+                <div class="card-body">
+                    <h5 class="card-title">Ortalama Kar</h5>
+                    <h2 class="display-4 fw-bold">₺{{ avg_profit }}</h2>
+                    <p class="card-text"><small>Ürün başına ortalama kar</small></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grafikler -->
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card glass-effect shadow mb-4">
+                <div class="card-header bg-transparent border-secondary text-white">Fiyat Değişim Trendi</div>
+                <div class="card-body">
+                    <canvas id="priceChart" height="120"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card glass-effect shadow mb-4">
+                <div class="card-header bg-transparent border-secondary text-white">Pazar Payı Dağılımı</div>
+                <div class="card-body">
+                    <canvas id="marketShareChart" height="250"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Örnek Grafik Verileri
+    const ctx = document.getElementById('priceChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: {{ labels|safe }},
+            datasets: [{
+                label: 'Benim Fiyatım',
+                data: {{ my_prices|safe }},
+                borderColor: '#ffc107',
+                tension: 0.4
+            }, {
+                label: 'En Düşük Rakip',
+                data: {{ comp_prices|safe }},
+                borderColor: '#0dcaf0',
+                tension: 0.4
+            }]
+        },
+        options: { plugins: { legend: { labels: { color: 'white' } } }, scales: { y: { ticks: { color: 'white' } }, x: { ticks: { color: 'white' } } } }
+    });
+
+    const ctx2 = document.getElementById('marketShareChart').getContext('2d');
+    new Chart(ctx2, {
+        type: 'doughnut',
+        data: {
+            labels: {{ platform_labels|safe }},
+            datasets: [{
+                data: {{ platform_data|safe }},
+                backgroundColor: ['#ff6b6b', '#ff9f43', '#feca57', '#48dbfb', '#1dd1a1', '#5f27cd']
+            }]
+        },
+        options: { plugins: { legend: { labels: { color: 'white' } } } }
+    });
+</script>
+{% endblock %}

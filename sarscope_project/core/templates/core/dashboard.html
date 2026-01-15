@@ -1,0 +1,101 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Panel - SarScope{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 animate__animated animate__fadeIn">
+    <h1 class="fw-light">Ürün <span class="fw-bold text-primary">Takip Paneli</span></h1>
+    <div>
+        <a href="{% url 'send_report' 'dashboard' %}" class="btn btn-outline-warning shadow-sm me-2">📧 Raporu Mail At</a>
+        <a href="{% url 'add_product' %}" class="btn btn-primary shadow-sm">➕ Yeni Ürün Ekle</a>
+    </div>
+</div>
+
+<!-- Arama ve Filtreleme Alanı -->
+<div class="card glass-effect mb-4 animate__animated animate__fadeInDown">
+    <div class="card-body py-3">
+        <form method="get" class="row g-2 align-items-center">
+            <div class="col-md-5">
+                <input type="text" name="q" class="form-control bg-dark text-light border-secondary" placeholder="🔍 Ürün adı veya SKU ara..." value="{{ query|default:'' }}">
+            </div>
+            <div class="col-md-3">
+                <select name="brand" class="form-select bg-dark text-light border-secondary" onchange="this.form.submit()">
+                    <option value="">Tüm Markalar</option>
+                    {% for brand in brands %}
+                        <option value="{{ brand }}" {% if brand == selected_brand %}selected{% endif %}>{{ brand }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-info w-100 text-white">Filtrele</button>
+            </div>
+            {% if query or selected_brand %}
+            <div class="col-md-2">
+                <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary w-100">Temizle</a>
+            </div>
+            {% endif %}
+        </form>
+    </div>
+</div>
+
+{% if products %}
+    <div class="card glass-effect shadow-sm animate__animated animate__fadeInUp">
+        <div class="table-responsive">
+            <table class="table table-hover table-dark mb-0 align-middle">
+                <thead class="bg-secondary">
+                <tr>
+                    <th>Ürün Adı</th>
+                    <th>SKU</th>
+                    <th>Fiyatım</th>
+                    <th>Maliyet</th>
+                    <th>Rakipler</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                <tr>
+                    <td>
+                        <div class="fw-bold">{{ product.name }}</div>
+                        <span class="badge bg-primary bg-opacity-25 text-primary border border-primary border-opacity-25" style="font-size: 0.7em;">{{ product.brand_name|default:product.name.split.0 }}</span>
+                    </td>
+                    <td><span class="badge bg-secondary">{{ product.sku }}</span></td>
+                    <td class="text-warning fw-bold">{{ product.my_price }} TL</td>
+                    <td class="text-muted">{{ product.cost_price }} TL</td>
+                    <td>
+                        {% for competitor in product.competitors.all %}
+                            <div class="mb-1">
+                                <small class="badge bg-dark border border-secondary">{{ competitor.marketplace_name }}</small>
+                                {% if competitor.current_price %}
+                                    <span class="fw-bold {% if competitor.current_price < product.my_price %}text-danger{% else %}text-success{% endif %}">
+                                        {{ competitor.current_price }} TL
+                                    </span>
+                                {% else %}
+                                    <span class="text-muted">Fiyat Yok</span>
+                                {% endif %}
+                                <a href="{{ competitor.url }}" target="_blank" class="text-decoration-none">🔗</a>
+                            </div>
+                        {% empty %}
+                            <span class="text-muted fst-italic">Rakip yok</span>
+                        {% endfor %}
+                    </td>
+                    <td>
+                        <div class="btn-group btn-group-sm shadow-sm">
+                            <a href="{% url 'scan_product' product.id %}" class="btn btn-outline-warning" title="Tarat">🔄</a>
+                            <a href="{% url 'find_competitors' product.id %}" class="btn btn-outline-primary" title="Otomatik Bul">🔍</a>
+                            <a href="{% url 'add_competitor' product.id %}" class="btn btn-outline-info" title="Rakip Ekle">🔗</a>
+                            <a href="{% url 'delete_product' product.id %}" class="btn btn-outline-danger" title="Sil">🗑️</a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    </div>
+{% else %}
+    <div class="alert alert-info">
+        Henüz takip edilen bir ürün yok. <a href="{% url 'add_product' %}" class="alert-link">İlk ürününü ekle!</a>
+    </div>
+{% endif %}
+{% endblock %}

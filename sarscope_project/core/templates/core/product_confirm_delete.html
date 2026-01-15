@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Ürünü Sil - SarScope</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0">⚠️ Silme Onayı</h4>
+                </div>
+                <div class="card-body text-center">
+                    <p class="lead"><strong>{{ product.name }}</strong> adlı ürünü silmek istediğinize emin misiniz?</p>
+                    <p class="text-muted">Bu işlem geri alınamaz ve ürüne bağlı tüm rakip verileri de silinir.</p>
+                    <form method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-lg">Evet, Sil</button>
+                        <a href="{% url 'dashboard' %}" class="btn btn-secondary btn-lg">İptal</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

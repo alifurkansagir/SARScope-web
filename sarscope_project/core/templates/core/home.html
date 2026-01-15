@@ -1,0 +1,64 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Ana Sayfa - SarScope{% endblock %}
+
+{% block content %}
+<div class="text-center mb-5 animate__animated animate__fadeIn">
+    <h1 class="display-4 fw-bold">SarScope <span class="text-primary">Kontrol Merkezi</span></h1>
+    <p class="lead text-muted">E-ticaret operasyonlarınızı tek bir yerden yönetin.</p>
+</div>
+
+<div class="row g-4 animate__animated animate__fadeInUp">
+    <!-- Dashboard Kartı -->
+    <div class="col-md-6 col-lg-3">
+        <div class="card h-100 glass-effect shadow-sm hover-card">
+            <div class="card-body text-center p-4">
+                <div class="display-4 mb-3">📊</div>
+                <h4 class="card-title">Takip Paneli</h4>
+                <p class="card-text text-muted small">Ürünlerinizi ve rakiplerinizi anlık olarak izleyin.</p>
+                <a href="{% url 'dashboard' %}" class="btn btn-primary w-100 stretched-link">Panele Git</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analiz Kartı -->
+    <div class="col-md-6 col-lg-3">
+        <div class="card h-100 glass-effect shadow-sm hover-card">
+            <div class="card-body text-center p-4">
+                <div class="display-4 mb-3">📈</div>
+                <h4 class="card-title">Pazar Analizi</h4>
+                <p class="card-text text-muted small">Fiyat trendlerini ve rekabet avantajınızı grafiklerle inceleyin.</p>
+                <a href="{% url 'analysis' %}" class="btn btn-info text-white w-100 stretched-link">Analize Git</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Trend Hunter Kartı -->
+    <div class="col-md-6 col-lg-3">
+        <div class="card h-100 glass-effect shadow-sm hover-card">
+            <div class="card-body text-center p-4">
+                <div class="display-4 mb-3">🕵️‍♂️</div>
+                <h4 class="card-title">Trend Avcısı</h4>
+                <p class="card-text text-muted small">Kategorileri tarayın ve çok satan fırsat ürünlerini keşfedin.</p>
+                <a href="{% url 'trend_hunter' %}" class="btn btn-warning w-100 stretched-link">Avı Başlat</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Price Patrol Kartı -->
+    <div class="col-md-6 col-lg-3">
+        <div class="card h-100 glass-effect shadow-sm hover-card border-danger">
+            <div class="card-body text-center p-4">
+                <div class="display-4 mb-3">🛡️</div>
+                <h4 class="card-title">Fiyat Devriyesi</h4>
+                <p class="card-text text-muted small">Tüm ürünleriniz için toplu fiyat taraması başlatın.</p>
+                <a href="{% url 'run_price_patrol' %}" class="btn btn-outline-danger w-100 stretched-link">Taramayı Başlat</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .hover-card:hover { transform: translateY(-5px); transition: transform 0.3s ease; }
+</style>
+{% endblock %}
